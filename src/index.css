@@ -381,3 +381,105 @@ body {
   font-family: 'Instrument Sans', sans-serif !important;
   font-size: 12px !important;
 }
+
+/* ── BOTTOM TAB BAR (mobile only) ── */
+.bottom-nav {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 300;
+  background: var(--white); border-top: 1px solid var(--border);
+  padding: 6px 0 env(safe-area-inset-bottom, 6px);
+}
+.bottom-nav-inner { display: flex; justify-content: space-around; }
+.bottom-nav-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  border: none; background: none; cursor: pointer;
+  padding: 6px 12px; border-radius: 10px; flex: 1;
+  font-family: 'Instrument Sans', sans-serif; font-size: 10px; font-weight: 500;
+  color: var(--ink-light); transition: color 0.12s;
+  min-width: 0;
+}
+.bottom-nav-btn.active { color: var(--rose); }
+.bottom-nav-btn .bnav-icon { font-size: 18px; line-height: 1; }
+.bottom-nav-btn .bnav-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60px; }
+
+/* ── RESPONSIVE: TABLET (≤ 900px) ── */
+@media (max-width: 900px) {
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+  .grid-2-1 { grid-template-columns: 1fr; }
+  .grid-equal { grid-template-columns: 1fr; }
+
+  .header-nav { display: none; }
+
+  .sidebar { width: 180px; min-width: 180px; }
+}
+
+/* ── RESPONSIVE: MOBILE (≤ 640px) ── */
+@media (max-width: 640px) {
+  /* Header */
+  .header { padding: 0 16px; height: 56px; }
+  :root { --header-h: 56px; }
+  .logo-badge { display: none; }
+  .btn-export { display: none; }
+  .header-nav { display: none; }
+
+  /* Layout — hide sidebar, show bottom nav */
+  .sidebar { display: none; }
+  .layout { height: calc(100vh - 56px); }
+  .bottom-nav { display: block; }
+  /* Add padding so content isn't hidden behind bottom nav */
+  .main-content { padding-bottom: 72px; }
+
+  /* Page */
+  .page { padding: 20px 16px; }
+  .page-title { font-size: 22px; }
+  .page-sub { font-size: 12.5px; }
+
+  /* Grids → single column */
+  .stat-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .grid-3 { grid-template-columns: 1fr; }
+  .grid-2-1 { grid-template-columns: 1fr; }
+  .grid-equal { grid-template-columns: 1fr; }
+
+  /* Stat cards */
+  .stat-card { padding: 14px 16px; }
+  .stat-value { font-size: 24px; }
+
+  /* Cards */
+  .card-body { padding: 14px 16px; }
+  .card-header { padding: 13px 16px 11px; flex-wrap: wrap; gap: 6px; }
+
+  /* Hormone bars */
+  .hormone-name { width: 62px; font-size: 11.5px; }
+  .hormone-val { width: 56px; font-size: 10px; }
+  .hormone-status { width: 44px; font-size: 10px; }
+
+  /* Gene table — horizontal scroll */
+  .gene-table th, .gene-table td { padding: 8px 10px; font-size: 11.5px; }
+
+  /* Metabolite grid → 2 col */
+  .metabolite-grid { grid-template-columns: repeat(2, 1fr); }
+
+  /* IR markers */
+  .ir-label { width: 90px; font-size: 11.5px; }
+
+  /* Risk ring — smaller */
+  .risk-ring-wrap { width: 120px; height: 120px; }
+  .risk-score-num { font-size: 30px; }
+
+  /* AI page */
+  .analysis-tab { padding: 6px 12px; font-size: 12px; }
+  .query-input { min-height: 80px; }
+
+  /* Modal */
+  .modal { padding: 20px 18px; border-radius: 14px; }
+  .modal-title { font-size: 18px; }
+}
+
+/* ── RESPONSIVE: SMALL MOBILE (≤ 380px) ── */
+@media (max-width: 380px) {
+  .stat-grid { grid-template-columns: 1fr; }
+  .metabolite-grid { grid-template-columns: 1fr; }
+  .page { padding: 16px 12px; }
+  .stat-value { font-size: 22px; }
+}

@@ -161,6 +161,22 @@ export default function App() {
       </div>
 
       {showExport && <ExportModal onClose={() => setShowExport(false)} />}
+
+      {/* Mobile bottom nav — hidden on desktop via CSS */}
+      <nav className="bottom-nav">
+        <div className="bottom-nav-inner">
+          {NAV_ITEMS.map(n => (
+            <button
+              key={n.id}
+              className={`bottom-nav-btn ${page === n.id ? 'active' : ''}`}
+              onClick={() => setPage(n.id)}
+            >
+              <span className="bnav-icon">{n.icon}</span>
+              <span className="bnav-label">{n.label}</span>
+            </button>
+          ))}
+        </div>
+      </nav>
     </>
   );
 }
