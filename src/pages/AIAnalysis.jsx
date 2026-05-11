@@ -62,7 +62,7 @@ export default function AIAnalysis() {
 
     try {
       const genAI = new GoogleGenerativeAI(API_KEY);
-      const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+      const model = genAI.getGenerativeModel({ model: 'gemini-3.1-flash-lite-preview' });
       const response = await model.generateContent(getPrompt());
       setResult(response.response.text());
       setTimeout(() => outputRef.current?.scrollIntoView({ behavior: 'smooth' }), 100);
@@ -85,19 +85,10 @@ export default function AIAnalysis() {
     <div className="page">
       <div className="page-header">
         <h1 className="page-title">AI-Powered Analysis</h1>
-        <p className="page-sub">Gemini Flash · Clinical interpretation of your complete bioinformatics profile</p>
+        <p className="page-sub">AI-powered clinical interpretation of your complete bioinformatics profile</p>
       </div>
 
-      {/* Gemini badge */}
-      <div style={{
-        display: 'inline-flex', alignItems: 'center', gap: 8,
-        background: 'linear-gradient(135deg, #4A5BE8, #0E9B8A)',
-        color: 'white', borderRadius: 100, padding: '5px 14px',
-        fontSize: 12, fontWeight: 600, marginBottom: 20,
-        boxShadow: '0 2px 10px rgba(74,91,232,0.25)',
-      }}>
-        ✦ Powered by Gemini 2.0 Flash
-      </div>
+
 
       {/* Missing key warning */}
       {keyMissing && (
@@ -118,98 +109,85 @@ export default function AIAnalysis() {
         </div>
       )}
 
-      <div className="grid-2-1">
-        {/* Left: Query Builder */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
-          <div className="card">
-            <div className="card-header">
-              <div className="card-title">Analysis Type</div>
-            </div>
-            <div className="card-body">
-              <div className="analysis-tabs">
-                {TABS.map(t => (
-                  <button
-                    key={t.id}
-                    className={`analysis-tab ${activeTab === t.id ? 'active' : ''}`}
-                    onClick={() => { setActiveTab(t.id); setResult(null); setError(null); }}
-                  >
-                    {t.label}
-                  </button>
-                ))}
-              </div>
+      {/* Centred single-column layout */}
+      <div style={{ maxWidth: 860, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 20 }}>
 
-              {activeTab === 'custom' ? (
-                <div>
-                  <div style={{ border: '1px solid var(--border)', borderRadius: 10, padding: '12px 14px', marginBottom: 12 }}>
-                    <textarea
-                      className="query-input"
-                      value={customQuery}
-                      onChange={e => setCustomQuery(e.target.value)}
-                      placeholder="e.g. What does the CYP11A1 variant mean for this patient's androgen levels?"
-                    />
-                  </div>
-                  <div style={{ fontSize: 12, color: 'var(--ink-light)', marginBottom: 10 }}>Quick questions:</div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginBottom: 16 }}>
-                    {QUICK_QUESTIONS.map((q, i) => (
-                      <button key={i} onClick={() => setCustomQuery(q)} style={{
-                        border: '1px solid var(--border)', background: 'var(--surface)',
-                        borderRadius: 20, padding: '5px 12px', fontSize: 12, cursor: 'pointer',
-                        color: 'var(--ink-mid)', fontFamily: "'Instrument Sans', sans-serif",
-                        transition: 'all 0.12s',
-                      }}>
-                        {q}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              ) : (
-                <div style={{
-                  background: 'var(--surface)', border: '1px solid var(--border)',
-                  borderRadius: 10, padding: '12px 14px', marginBottom: 16,
-                  fontFamily: "'DM Mono', monospace", fontSize: 11.5, color: 'var(--ink-light)',
-                  lineHeight: 1.7, maxHeight: 110, overflow: 'hidden',
-                }}>
-                  {PROMPTS[activeTab]?.slice(0, 260)}...
-                </div>
-              )}
-
-              <button
-                className="btn-primary btn-full"
-                onClick={runAnalysis}
-                disabled={loading || keyMissing || (activeTab === 'custom' && !customQuery.trim())}
-              >
-                {loading
-                  ? <><span className="spinner">⟳</span> Gemini is analyzing...</>
-                  : <>✦ Run AI Analysis</>}
-              </button>
+        {/* Query Builder */}
+        <div className="card">
+          <div className="card-header">
+            <div className="card-title">Analysis Type</div>
+            {/* Context chips inline */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+              {contextChips.map((c, i) => (
+                <span key={i} className={`card-badge ${c.cls}`}>{c.label}</span>
+              ))}
             </div>
           </div>
+          <div className="card-body">
+            <div className="analysis-tabs">
+              {TABS.map(t => (
+                <button
+                  key={t.id}
+                  className={`analysis-tab ${activeTab === t.id ? 'active' : ''}`}
+                  onClick={() => { setActiveTab(t.id); setResult(null); setError(null); }}
+                >
+                  {t.label}
+                </button>
+              ))}
+            </div>
 
-          {/* Context Chips */}
-          <div className="card">
-            <div className="card-header">
-              <div className="card-title">Patient Context Included</div>
-              <span className="card-badge badge-teal">AUTO</span>
-            </div>
-            <div className="card-body">
-              <div className="context-chips">
-                {contextChips.map((c, i) => (
-                  <span key={i} className={`card-badge ${c.cls}`}>{c.label}</span>
-                ))}
+            {activeTab === 'custom' ? (
+              <div>
+                <div style={{ border: '1px solid var(--border)', borderRadius: 10, padding: '12px 14px', marginBottom: 12 }}>
+                  <textarea
+                    className="query-input"
+                    value={customQuery}
+                    onChange={e => setCustomQuery(e.target.value)}
+                    placeholder="e.g. What does the CYP11A1 variant mean for this patient's androgen levels?"
+                  />
+                </div>
+                <div style={{ fontSize: 12, color: 'var(--ink-light)', marginBottom: 10 }}>Quick questions:</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 7, marginBottom: 16 }}>
+                  {QUICK_QUESTIONS.map((q, i) => (
+                    <button key={i} onClick={() => setCustomQuery(q)} style={{
+                      border: '1px solid var(--border)', background: 'var(--surface)',
+                      borderRadius: 20, padding: '5px 12px', fontSize: 12, cursor: 'pointer',
+                      color: 'var(--ink-mid)', fontFamily: "'Instrument Sans', sans-serif",
+                      transition: 'all 0.12s',
+                    }}>
+                      {q}
+                    </button>
+                  ))}
+                </div>
               </div>
-              <p style={{ fontSize: 12, color: 'var(--ink-light)', marginTop: 8 }}>
-                All hormone values, genomic variants, metabolomics data, and pathway scores are automatically included.
-              </p>
-            </div>
+            ) : (
+              <div style={{
+                background: 'var(--surface)', border: '1px solid var(--border)',
+                borderRadius: 10, padding: '12px 14px', marginBottom: 16,
+                fontFamily: "'DM Mono', monospace", fontSize: 11.5, color: 'var(--ink-light)',
+                lineHeight: 1.7, maxHeight: 90, overflow: 'hidden',
+              }}>
+                {PROMPTS[activeTab]?.slice(0, 300)}...
+              </div>
+            )}
+
+            <button
+              className="btn-primary btn-full"
+              onClick={runAnalysis}
+              disabled={loading || keyMissing || (activeTab === 'custom' && !customQuery.trim())}
+            >
+              {loading
+                ? <><span className="spinner">⟳</span> Gemini is analyzing...</>
+                : <>✦ Run AI Analysis</>}
+            </button>
           </div>
         </div>
 
-        {/* Right: Output */}
+        {/* Output — full width, centred */}
         <div className="card" ref={outputRef}>
           <div className="card-header">
             <div>
               <div className="card-title">Analysis Output</div>
-              <div className="card-sub">Gemini 2.0 Flash</div>
             </div>
             {result && <span className="card-badge badge-teal">COMPLETE</span>}
             {error && <span className="card-badge badge-rose">ERROR</span>}
@@ -235,9 +213,35 @@ export default function AIAnalysis() {
                 <div style={{ fontSize: 12.5, color: 'var(--ink-mid)', lineHeight: 1.6 }}>{error}</div>
               </div>
             )}
-            {result && <div className="ai-output">{result}</div>}
+            {result && (
+              <div style={{ fontSize: 13.5, color: 'var(--ink)', lineHeight: 1.9 }}>
+                {result.split('\n').map((line, i) => {
+                  // H3 ### heading
+                  if (line.startsWith('### '))
+                    return <h3 key={i} style={{ fontFamily: "'DM Serif Display', serif", fontSize: 16, margin: '18px 0 6px', color: 'var(--ink)' }}>{line.replace(/^###\s*/, '')}</h3>;
+                  // H2 ## heading
+                  if (line.startsWith('## '))
+                    return <h2 key={i} style={{ fontFamily: "'DM Serif Display', serif", fontSize: 18, margin: '22px 0 8px', color: 'var(--ink)' }}>{line.replace(/^##\s*/, '')}</h2>;
+                  // Bold **text**
+                  const parts = line.split(/(\*\*[^*]+\*\*)/g).map((p, j) =>
+                    p.startsWith('**') ? <strong key={j}>{p.slice(2, -2)}</strong> : p
+                  );
+                  // Bullet
+                  if (line.startsWith('* ') || line.startsWith('- '))
+                    return <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 4 }}><span style={{ color: 'var(--rose)', flexShrink: 0 }}>•</span><span>{parts.slice(1)}</span></div>;
+                  // Divider ---
+                  if (line.trim() === '---')
+                    return <hr key={i} style={{ border: 'none', borderTop: '1px solid var(--border)', margin: '16px 0' }} />;
+                  // Empty line
+                  if (line.trim() === '')
+                    return <div key={i} style={{ height: 8 }} />;
+                  return <p key={i} style={{ margin: '0 0 4px' }}>{parts}</p>;
+                })}
+              </div>
+            )}
           </div>
         </div>
+
       </div>
 
       {/* Disclaimer */}
